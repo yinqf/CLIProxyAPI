@@ -20,7 +20,7 @@ func TestListAuthFiles_IncludesProjectIDFromManager(t *testing.T) {
 	authDir := t.TempDir()
 	fileName := "antigravity-user@example.com-project-a.json"
 	filePath := filepath.Join(authDir, fileName)
-	if errWrite := os.WriteFile(filePath, []byte(`{"type":"antigravity","email":"user@example.com","project_id":"project-a","proxy_url":"http://proxy.example:8080"}`), 0o600); errWrite != nil {
+	if errWrite := os.WriteFile(filePath, []byte(`{"type":"antigravity","email":"user@example.com","project_id":"project-a"}`), 0o600); errWrite != nil {
 		t.Fatalf("failed to write auth file: %v", errWrite)
 	}
 
@@ -30,7 +30,6 @@ func TestListAuthFiles_IncludesProjectIDFromManager(t *testing.T) {
 		FileName: fileName,
 		Provider: "antigravity",
 		Status:   coreauth.StatusActive,
-		ProxyURL: "http://proxy.example:8080",
 		Attributes: map[string]string{
 			"path": filePath,
 		},
@@ -51,9 +50,6 @@ func TestListAuthFiles_IncludesProjectIDFromManager(t *testing.T) {
 	if got := entry["project_id"]; got != "project-a" {
 		t.Fatalf("expected project_id %q, got %#v", "project-a", got)
 	}
-	if got := entry["proxy_url"]; got != "http://proxy.example:8080" {
-		t.Fatalf("expected proxy_url %q, got %#v", "http://proxy.example:8080", got)
-	}
 }
 
 func TestListAuthFilesFromDisk_IncludesProjectID(t *testing.T) {
@@ -61,7 +57,7 @@ func TestListAuthFilesFromDisk_IncludesProjectID(t *testing.T) {
 
 	authDir := t.TempDir()
 	filePath := filepath.Join(authDir, "antigravity-user@example.com-project-a.json")
-	if errWrite := os.WriteFile(filePath, []byte(`{"type":"antigravity","email":"user@example.com","project_id":"project-a","proxy_url":"http://proxy.example:8080"}`), 0o600); errWrite != nil {
+	if errWrite := os.WriteFile(filePath, []byte(`{"type":"antigravity","email":"user@example.com","project_id":"project-a"}`), 0o600); errWrite != nil {
 		t.Fatalf("failed to write auth file: %v", errWrite)
 	}
 
@@ -70,9 +66,6 @@ func TestListAuthFilesFromDisk_IncludesProjectID(t *testing.T) {
 	entry := firstAuthFileEntry(t, h)
 	if got := entry["project_id"]; got != "project-a" {
 		t.Fatalf("expected project_id %q, got %#v", "project-a", got)
-	}
-	if got := entry["proxy_url"]; got != "http://proxy.example:8080" {
-		t.Fatalf("expected proxy_url %q, got %#v", "http://proxy.example:8080", got)
 	}
 }
 
